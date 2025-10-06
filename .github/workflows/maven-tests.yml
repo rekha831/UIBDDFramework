@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'    # You can use adopt or temurin
-          java-version: '8'
+          java-version: '11'
           cache: maven
 
       # 3️⃣ Install Chrome browser (for Selenium)
