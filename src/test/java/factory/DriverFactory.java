@@ -28,18 +28,10 @@ public class DriverFactory {
         switch (browser.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
-                ChromeOptions chromeOptions = new ChromeOptions();
-
-                // ✅ Headless + CI-friendly options
-                chromeOptions.addArguments("--headless=new");  // Selenium 4.36+ headless
-                chromeOptions.addArguments("--no-sandbox");    // Linux CI requirement
-                chromeOptions.addArguments("--disable-dev-shm-usage");
-                chromeOptions.addArguments("--disable-gpu");
-                chromeOptions.addArguments("--window-size=1920,1080");
-                chromeOptions.addArguments("--remote-allow-origins=*");
-                chromeOptions.addArguments("--user-data-dir=/tmp/chrome-" + UUID.randomUUID());
-
-                driver = new ChromeDriver(chromeOptions);
+                ChromeOptions options = new ChromeOptions();
+// no headless
+options.addArguments("--window-size=1920,1080");
+driver = new ChromeDriver(options);
                 break;
 
             case "firefox":
