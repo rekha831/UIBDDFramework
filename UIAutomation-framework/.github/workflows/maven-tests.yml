@@ -1,0 +1,46 @@
+name: UI Automation - CI Pipeline (Java 8)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout your repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up JDK 8
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'    # You can use adopt or temurin
+          java-version: '8'
+          cache: maven
+
+      # 3️⃣ Install Chrome browser (for Selenium)
+      - name: Install Chrome
+        run: |
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+
+      # 4️⃣ Verify Chrome installation
+      - name: Verify Chrome Installation
+        run: google-chrome --version
+
+      # 5️⃣ Build and run tests
+      - name: Run Maven Tests
+        run: mvn clean test -Dbrowser=chrome
+
+      # 6️⃣ Upload HTML reports (Cucumber)
+      - name: Upload Cucumber Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: target/cucumber-reports.html
