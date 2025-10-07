@@ -7,40 +7,61 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
-import java.util.UUID;
 
+/**
+ * Factory class for managing WebDriver instances.
+ * Supports multi-threading and CI environments (GitHub Actions).
+ */
 public class DriverFactory {
 
     private static final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
 
-    /**
-     * Initializes WebDriver instance for the given browser. Applies implicit wait
-     * and maximizes the window.
-     */
     public static void initDriver(String browser, String implicitWaitDuration) {
         if (tlDriver.get() != null) {
-            return; // Avoid reinitialization for same thread
+            return;
         }
 
         WebDriver driver;
 
+        boolean isCI = System.getenv("CI") != null; // ✅ Detect GitHub Actions environment
+
         switch (browser.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
-                ChromeOptions options = new ChromeOptions();
-// no headless
-options.addArguments("--window-size=1920,1080");
-driver = new ChromeDriver(options);
+                ChromeOptions chromeOptions = new ChromeOptions();
+
+                // Common options
+                chromeOptions.addArguments("--disable-notifications");
+                chromeOptions.addArguments("--window-size=1920,1080");
+
+                // ✅ Only add headless options for CI
+                if (isCI) {
+                    chromeOptions.addArguments("--headless=new");
+                    chromeOptions.addArguments("--no-sandbox");
+                    chromeOptions.addArguments("--disable-dev-shm-usage");
+
+                    try {
+                        Path tmpProfile = Files.createTempDirectory("chrome-profile");
+                        chromeOptions.addArguments("--user-data-dir=" + tmpProfile.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                driver = new ChromeDriver(chromeOptions);
                 break;
 
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
-
-                // Headless mode for CI
-                firefoxOptions.addArguments("-headless");
-                firefoxOptions.addArguments("--window-size=1920,1080");
+                if (isCI) {
+                    firefoxOptions.addArguments("--headless");
+                    firefoxOptions.addArguments("--width=1920");
+                    firefoxOptions.addArguments("--height=1080");
+                }
                 driver = new FirefoxDriver(firefoxOptions);
                 break;
 
@@ -51,18 +72,21 @@ driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         tlDriver.set(driver);
 
-        // ✅ Implicit Wait
+        // ✅ Use implicit wait for simple sync
         try {
             long waitTime = Long.parseLong(implicitWaitDuration);
-            tlDriver.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(waitTime));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(waitTime));
         } catch (NumberFormatException e) {
-            tlDriver.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            System.err.println("⚠️ Invalid implicitWait value. Defaulting to 10 seconds.");
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         }
+
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
     }
 
     public static WebDriver getDriver() {
         if (tlDriver.get() == null) {
-            throw new IllegalStateException("WebDriver not initialized. Call initDriver() first.");
+            throw new IllegalStateException("❌ WebDriver not initialized. Call initDriver() first.");
         }
         return tlDriver.get();
     }
