@@ -5,6 +5,8 @@ import pages.LoginPage;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import utils.JsonReader;
@@ -12,7 +14,6 @@ import utils.JsonReader;
 public class LoginSteps {
 	private WebDriver driver;
 	private LoginPage loginPage;
-
 
 	@Given("I am on the login page")
 	public void i_am_on_login_page() {
@@ -41,6 +42,12 @@ public class LoginSteps {
 		driver.findElement(By.xpath("//input[@data-testid='user-mobileno-input-box']")).sendKeys(username);
 		driver.findElement(By.xpath("//input[@data-testid='password-input-box-cta']")).sendKeys(password);
 		driver.findElement(By.xpath("//div[@data-testid='login-cta']")).click();
+		/*loginPage.clickLoginBtn();
+		loginPage.enterUsername(username);
+		loginPage.enterPassword(password);
+		loginPage.clickLogin();
+		*/
+
 	}
 	
 	@Then("I should see the {string} error on login page")
