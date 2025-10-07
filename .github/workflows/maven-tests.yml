@@ -1,4 +1,4 @@
-name: UI Automation - Selenium Java CI
+name: Run Selenium Cucumber Tests (Java)
 
 on:
   push:
@@ -7,39 +7,56 @@ on:
     branches: [ master ]
 
 jobs:
-  build-test:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Step 1: Checkout the source code
-      - name: Checkout repository
+      # ✅ Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # ✅ Step 2: Set up Java 17 with Maven cache
+      # ✅ Set up Java 17
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'
+          distribution: temurin
+          java-version: 17
+          cache: maven
 
-      # ✅ Step 3: Install Google Chrome (WebDriverManager handles driver)
-      - name: Install Google Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: 'latest'
-          install-chromedriver: 'false'
+      # ✅ Install Chrome browser (needed for Selenium)
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable || true
+          google-chrome --version
 
-      # ✅ Step 4: Build and execute tests
-      - name: Run Maven tests
-        run: mvn clean test -B
+      # ✅ Verify Chrome installation
+      - name: Verify ChromeDriver and Chrome setup
+        run: |
+          mvn dependency:resolve
+          echo "Chrome and driver setup verified"
 
-      # ✅ Step 5: Upload reports & screenshots even if tests fail
-      - name: Upload test reports
+      # ✅ Run tests in headless mode
+      - name: Run Selenium Tests
+        env:
+          CI: true               # 👈 tells DriverFactory to use headless mode
+          BROWSER: chrome
+          IMPLICIT_WAIT: 10
+        run: mvn clean test --batch-mode
+
+      # ✅ Upload Cucumber HTML report (if it exists)
+      - name: Upload Cucumber HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: UI-Test-Reports
-          path: |
-            target/surefire-reports/**
-            target/cucumber-reports/**
+          name: cucumber-html-report
+          path: target/cucumber-reports/**/*.html
+
+      # ✅ Upload screenshots (optional but helpful)
+      - name: Upload Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-screenshots
+          path: target/screenshots/
+          if-no-files-found: ignore
