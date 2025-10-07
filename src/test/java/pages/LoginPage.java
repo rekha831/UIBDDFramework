@@ -1,8 +1,13 @@
 package pages;
 
+import java.time.Duration;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class LoginPage extends BasePage {
@@ -33,13 +38,23 @@ public LoginPage(WebDriver driver) {
 super(driver);
 }
 
-
+/*
 public void enterUsername(String user) {
 //txtUsername.clear();
 txtUsername.sendKeys(user);
+}*/
+
+public void enterUsername(String user) {
+	//txtUsername.clear();
+	//txtUsername.sendKeys(user);
+	
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+WebElement mobileInput = wait.until(
+    ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@data-testid='user-mobileno-input-box']"))
+);
+mobileInput.sendKeys(user);
+
 }
-
-
 public void enterPassword(String pass) {
 //txtPassword.clear();
 txtPassword.sendKeys(pass);
