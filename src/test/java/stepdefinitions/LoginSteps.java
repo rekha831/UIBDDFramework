@@ -37,11 +37,10 @@ public class LoginSteps {
 		String password = JsonReader.getUserData(userType, "password");
 		System.out.println("user name is:"+username);
 		System.out.println("passord is:"+password);
-		loginPage.clickLoginBtn();
-		loginPage.enterUsername(username);
-		loginPage.enterPassword(password);
-		loginPage.clickLogin();
-
+		driver.findElement(By.xpath("//div[text()='Login']")).click();
+		driver.findElement(By.xpath("//input[@data-testid='user-mobileno-input-box']")).sendKeys(username);
+		driver.findElement(By.xpath("//input[@data-testid='password-input-box-cta']")).sendKeys(password);
+		driver.findElement(By.xpath("//div[@data-testid='login-cta']")).click();
 	}
 	
 	@Then("I should see the {string} error on login page")
