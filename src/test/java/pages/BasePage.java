@@ -1,20 +1,31 @@
-package pages;
+package hooks;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
+import java.time.Duration;
 
-
-public abstract class BasePage {
-protected WebDriver driver;
-
-
-public BasePage(WebDriver driver) {
-this.driver = driver;
-PageFactory.initElements(driver, this);
-}
+import config.ConfigManager;
+import factory.DriverFactory;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import utils.ScreenshotUtil;
 
 
-public String getTitle() {
-return driver.getTitle();
+public class Hooks {
+
+
+	@Before
+	public void beforeScenario() {
+	    String browser = System.getProperty("browser", ConfigManager.get("browser"));
+	    String implicitWaitDuration = System.getProperty("implicitWait", ConfigManager.get("implicitWait"));
+	    System.out.println("wait is"+implicitWaitDuration);
+	    DriverFactory.initDriver(browser, implicitWaitDuration);
+	}
+
+@After
+public void afterScenario(Scenario scenario) {
+    if (scenario.isFailed()) {
+        ScreenshotUtil.captureScreenshot(scenario);
+    }
+    DriverFactory.quitDriver();
 }
 }
