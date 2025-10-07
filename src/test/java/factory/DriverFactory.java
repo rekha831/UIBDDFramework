@@ -39,7 +39,7 @@ public class DriverFactory {
 
 			ChromeOptions options = new ChromeOptions();
 			if (System.getenv("CI") != null) { // GitHub Actions
-				options.addArguments("--headless=new");
+				options.addArguments("--headless");
 				options.addArguments("--disable-gpu");
 				options.addArguments("--no-sandbox");
 				options.addArguments("--disable-dev-shm-usage");
