@@ -33,6 +33,8 @@ public class LoginSteps {
 	public void i_login_with_credentials(String userType) {
 		String username = JsonReader.getUserData(userType, "username");
 		String password = JsonReader.getUserData(userType, "password");
+		System.out.println("user name is:"+username);
+		System.out.println("passord is:"+password);
 		loginPage.clickLoginBtn();
 		loginPage.enterUsername(username);
 		loginPage.enterPassword(password);
@@ -40,22 +42,14 @@ public class LoginSteps {
 
 	}
 	
-	@When("I login with {string} error on login page")
-	public void i_login_with_invalid_credentials(String userType) {
-		String username = JsonReader.getUserData(userType, "username");
-		String password = JsonReader.getUserData(userType, "password");
-		loginPage.clickLoginBtn();
-		loginPage.enterUsername(username);
-		loginPage.enterPassword(password);
-		loginPage.clickLogin();
+	@Then("I should see the {string} error on login page")
+	public void i_should_see_the_error_on_login_page(String text) {
+		String dashtext = JsonReader.getMessage(text);
+		String getloginErrorText = loginPage.getloginErrorText();
+		Assert.assertTrue(getloginErrorText.contains(getloginErrorText), "erroor is not displayed!");
 
 	}
 
-	@Then("I should see the dashboard")
-	public void i_should_see_the_dashboard() {
-		String title = driver.getTitle();
-		Assert.assertTrue(title.contains("SpiceJet - Flight Booking"), "Dashboard page not displayed!");
-	}
 
 	@Then("I should see the {string} on dashboard")
 	public void i_should_see_the_text_on_dashboard(String text) {
