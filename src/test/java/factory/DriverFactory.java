@@ -38,20 +38,14 @@ public class DriverFactory {
                 chromeOptions.addArguments("--window-size=1920,1080");
 
                 // ✅ Only add headless options for CI
-                if (isCI) {
-                    chromeOptions.addArguments("--headless=new");
-                    chromeOptions.addArguments("--no-sandbox");
-                    chromeOptions.addArguments("--disable-dev-shm-usage");
-
-                    try {
-                        Path tmpProfile = Files.createTempDirectory("chrome-profile");
-                        chromeOptions.addArguments("--user-data-dir=" + tmpProfile.toString());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                driver = new ChromeDriver(chromeOptions);
+              if (System.getenv("CI") != null) {  // GitHub Actions
+    options.addArguments("--headless=new");
+    options.addArguments("--disable-gpu");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+    options.addArguments("--window-size=1920,1080");
+}
+WebDriver driver = new ChromeDriver(options);
                 break;
 
             case "firefox":
