@@ -24,7 +24,7 @@ private WebElement txtPassword;
 @FindBy(xpath = "//div[@data-testid='login-cta']")
 private WebElement btnLogin;
 
-@FindBy(xpath = "(//div[@class='css-76zvg2 r-jwli3a r-ubezar'])[1]")
+@FindBy(xpath = "//div[text()='Login']")
 private WebElement LogiinButton1;
 
 @FindBy(xpath = "//div[text()='Hi jagadeesh']")
