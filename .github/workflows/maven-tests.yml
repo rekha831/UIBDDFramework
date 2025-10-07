@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-html-report
-          path: target/cucumber-reports/**/*.html
+          path: target/cucumber-reports.html
 
       # ✅ Upload screenshots (optional but helpful)
       - name: Upload Screenshots on Failure
