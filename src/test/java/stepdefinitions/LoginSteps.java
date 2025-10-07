@@ -13,11 +13,13 @@ public class LoginSteps {
 	private WebDriver driver;
 	private LoginPage loginPage;
 
+
 	@Given("I am on the login page")
 	public void i_am_on_login_page() {
 		driver = DriverFactory.getDriver();
 		driver.get("https://www.spicejet.com/"); // replace with actual login URL
 		loginPage = new LoginPage(driver);
+		System.out.println("current TITLE is:"+driver.getTitle());
 	}
 
 	@When("I login with username {string} and password {string}")
