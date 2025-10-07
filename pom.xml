@@ -1,99 +1,115 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.UI.automation</groupId>
-  <artifactId>UIAutomation-framework</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>UISeleniumCucumberFramework</name>
-  
-  <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <selenium.version>4.36.0</selenium.version>
-    <cucumber.version>7.30.0</cucumber.version>
-    <testng.version>7.11.0</testng.version>
-    <webdrivermanager.version>6.3.2</webdrivermanager.version>
-  </properties>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.UI.automation</groupId>
+    <artifactId>UIAutomation-framework</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>UISeleniumCucumberFramework</name>
 
-  <dependencies>
-    <!-- Selenium -->
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>${selenium.version}</version>
-    </dependency>
+    <properties>
+        <!-- ✅ Java 17 setup -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- Cucumber JVM (Java + TestNG) -->
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-java</artifactId>
-      <version>${cucumber.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-testng</artifactId>
-      <version>${cucumber.version}</version>
-    </dependency>
+        <!-- Versions -->
+        <selenium.version>4.36.0</selenium.version>
+        <cucumber.version>7.30.0</cucumber.version>
+        <testng.version>7.11.0</testng.version>
+        <webdrivermanager.version>6.3.2</webdrivermanager.version>
+    </properties>
 
-    <!-- TestNG -->
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testng.version}</version>
-      <scope>test</scope>
-    </dependency>
+    <dependencies>
 
-    <!-- WebDriverManager -->
-    <dependency>
-      <groupId>io.github.bonigarcia</groupId>
-      <artifactId>webdrivermanager</artifactId>
-      <version>${webdrivermanager.version}</version>
-    </dependency>
+        <!-- ✅ Selenium -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
 
-    <!-- JSON helper -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
-    </dependency>
-    
-    <dependency>
-    <groupId>com.googlecode.json-simple</groupId>
-    <artifactId>json-simple</artifactId>
-    <version>1.1.1</version>
-</dependency>
+        <!-- ✅ Cucumber (Java + TestNG) -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
 
-  </dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
 
-  <build>
-    <plugins>
-        <!-- Maven Compiler Plugin to use Java 11 -->
-        <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.13.0</version>
-            <configuration>
-                <source>11</source>
-                <target>11</target>
-            </configuration>
-        </plugin>
+        <!-- ✅ TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- Maven Surefire Plugin to run TestNG tests -->
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.0.0-M8</version>
-            <configuration>
-                <!-- Point to your TestNG suite file -->
-                <suiteXmlFiles>
-                    <suiteXmlFile>testng.xml</suiteXmlFile>
-                </suiteXmlFiles>
-                <!-- Enable reporting for CI pipelines -->
-                <useFile>false</useFile>
-                <reportFormat>brief</reportFormat>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
-  
+        <!-- ✅ WebDriverManager -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
+
+        <!-- ✅ JSON libraries -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- ✅ Compiler Plugin explicitly set for Java 17 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <!-- ✅ Surefire Plugin for running TestNG & Cucumber -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <includes>
+                        <include>**/*Test*.java</include>
+                        <include>**/*Runner*.java</include>
+                    </includes>
+                </configuration>
+                
+            </plugin>
+            <plugin>
+    <groupId>net.masterthought</groupId>
+    <artifactId>maven-cucumber-reporting</artifactId>
+    <version>5.8.0</version>
+</plugin>
+        </plugins>
+    </build>
+
 </project>
