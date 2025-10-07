@@ -25,6 +25,9 @@ private WebElement LogiinButton1;
 @FindBy(xpath = "//div[text()='Hi jagadeesh']")
 private WebElement dashboardText;
 
+@FindBy(xpath = "//div[text()='Please enter valid mobile number']")
+private WebElement errorText;
+
 
 public LoginPage(WebDriver driver) {
 super(driver);
@@ -53,6 +56,11 @@ public void clickLoginBtn() {
 
 public String getText() {
 	return dashboardText.getText();
+	
+}
+
+public String getloginErrorText() {
+	return errorText.getText();
 	
 }
 }
