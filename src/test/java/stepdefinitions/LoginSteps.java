@@ -37,15 +37,10 @@ public class LoginSteps {
 		String password = JsonReader.getUserData(userType, "password");
 		System.out.println("user name is:" + username);
 		System.out.println("passord is:" + password);
-		loginPage.clickLoginBtnText();
+		loginPage.clickLogin();
 		loginPage.enterUsername(username);
 		loginPage.enterPassword(password);
 		loginPage.clickLogin();
-		/*
-		 * loginPage.clickLoginBtn(); loginPage.enterUsername(username);
-		 * loginPage.enterPassword(password); loginPage.clickLogin();
-		 */
-
 	}
 
 	@Then("I should see the {string} error on login page")
