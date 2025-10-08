@@ -1,5 +1,5 @@
 {
-  "dashboardText": "Hi Jagadeesh",
-  "loginError": "Please enter valid mobile number",
-  "logoutMessage": "You have been logged out successfully"
+  "dashboardText": "ProtoCommerce Home",
+  "loginErrorText": "Please enter valid mobile number",
+  "logoutMessage": "ProtoCommerce Home"
 }

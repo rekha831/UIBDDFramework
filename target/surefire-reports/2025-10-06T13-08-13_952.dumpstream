@@ -1,5 +1,0 @@
-# Created at 2025-10-06T13:08:14.245
-Boot Manifest-JAR contains absolute paths in classpath 'D:\frameworkPracticeAfterWells\UIGramework\UIAutomation-framework\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-

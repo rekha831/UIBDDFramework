@@ -1,7 +1,12 @@
 {
 
   "validUser": {
-    "username": "8951749790",
+    "username": "rahulshettyacademy",
+    "password": "learning"
+  
+},
+  "invalidUser": {
+    "username": "89517497900",
     "password": "Whatsold12!@"
   
 }

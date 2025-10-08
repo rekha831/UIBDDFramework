@@ -1,66 +1,59 @@
 package pages;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Page Object representing the Login Page.
+ * Extends BasePage to reuse common Selenium interactions.
+ */
 public class LoginPage extends BasePage {
 
-    private WebDriverWait wait;
-
     // Locators
-    private By txtUsernameLocator = By.id("username");
-    private By txtPasswordLocator = By.cssSelector("[type='password']");
-    private By btnLoginLocator = By.id("signInBtn");
-    private By loginButtonTextLocator = By.id("signInBtn");
-    private By dashboardTextLocator = By.xpath("//a[text()='ProtoCommerce Home']");
-    private By errorTextLocator = By.xpath("//div[text()='Please enter valid mobile number']");
+    private final By txtUsername = By.id("username");
+    private final By txtPassword = By.cssSelector("[type='password']");
+    private final By btnLogin = By.id("signInBtn");
+    private final By dashboardText = By.xpath("//a[text()='ProtoCommerce Home']");
+    private final By errorText = By.xpath("//div[text()='Please enter valid mobile number']");
 
     // Constructor
     public LoginPage(WebDriver driver) {
         super(driver);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(30)); // explicit wait
     }
 
-    // Enter Username
+    // Page Actions
     public void enterUsername(String username) {
-        WebElement mobileInput = wait.until(ExpectedConditions.visibilityOfElementLocated(txtUsernameLocator));
-        mobileInput.clear();
-        mobileInput.sendKeys(username);
+        type(txtUsername, username);
     }
 
-    // Enter Password
     public void enterPassword(String password) {
-        WebElement passInput = wait.until(ExpectedConditions.visibilityOfElementLocated(txtPasswordLocator));
-        passInput.clear();
-        passInput.sendKeys(password);
+        type(txtPassword, password);
     }
 
-    // Click Login Button
     public void clickLogin() {
-        WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(btnLoginLocator));
-        loginBtn.click();
+        click(btnLogin);
     }
 
-    // Click "Login" button text (alternative)
-    public void clickLoginBtnText() {
-        WebElement loginBtnText = wait.until(ExpectedConditions.elementToBeClickable(loginButtonTextLocator));
-        loginBtnText.click();
-    }
-
-    // Get Dashboard Text
     public String getDashboardText() {
-        WebElement dashText = wait.until(ExpectedConditions.visibilityOfElementLocated(dashboardTextLocator));
-        return dashText.getText();
+        return getText(dashboardText);
     }
 
-    // Get Login Error Text
     public String getLoginErrorText() {
-        WebElement errText = wait.until(ExpectedConditions.visibilityOfElementLocated(errorTextLocator));
-        return errText.getText();
+        return getText(errorText);
+    }
+
+    public boolean isDashboardVisible() {
+        return isDisplayed(dashboardText);
+    }
+
+    public boolean isErrorDisplayed() {
+        return isDisplayed(errorText);
+    }
+
+    // Combined action (composite behavior)
+    public void login(String username, String password) {
+        enterUsername(username);
+        enterPassword(password);
+        clickLogin();
     }
 }

@@ -1,0 +1,68 @@
+# ========================
+# Maven / Java build files
+# ========================
+
+# Ignore target folder (all build output)
+target/
+
+# Ignore compiled classes
+*.class
+
+# Ignore generated JARs / WARs
+*.jar
+*.war
+*.ear
+
+# Ignore Maven build info
+target/maven-archiver/
+target/maven-status/
+
+# Ignore Eclipse project files
+.project
+.classpath
+.settings/
+
+# ========================
+# Test reports
+# ========================
+
+# Surefire / TestNG reports
+target/surefire-reports/
+test-output/
+testng-results.xml
+emailable-report.html
+testng-reports*.css
+testng-reports*.js
+
+# Cucumber reports
+target/cucumber-reports/
+cucumber-report-html/
+cucumber-report-json/
+
+# ========================
+# Logs
+# ========================
+*.log
+
+# ========================
+# IDE-specific files
+# ========================
+
+# IntelliJ
+*.iml
+.idea/
+
+# VSCode
+.vscode/
+
+# ========================
+# Other
+# ========================
+
+# JSON or properties files in target (compiled copies)
+target/**/*.json
+target/**/*.properties
+
+# Ignore any temporary files
+*.tmp
+*.swp
