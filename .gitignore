@@ -66,3 +66,6 @@ target/**/*.properties
 # Ignore any temporary files
 *.tmp
 *.swp
+
+# Eclipse workspace metadata
+.metadata/
