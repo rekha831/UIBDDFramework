@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Checkout code
+      # ✅ Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -21,9 +21,17 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: maven
 
-      # ✅ Install Chrome
+      # ✅ Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # ✅ Install Chrome browser (needed for Selenium)
       - name: Install Chrome
         run: |
           sudo apt-get update
@@ -31,44 +39,49 @@ jobs:
           google-chrome --version
 
       # ✅ Verify dependencies
-      - name: Verify dependencies
-        run: mvn dependency:resolve
+      - name: Verify ChromeDriver and Chrome setup
+        run: |
+          mvn dependency:resolve
+          echo "Chrome and driver setup verified"
 
-      # ✅ Run Selenium Tests (this will generate allure-results via Cucumber plugin)
+      # ✅ Run Selenium + TestNG + Rest-Assured Tests
       - name: Run Maven Tests
         env:
-          CI: true
+          CI: true               # tells DriverFactory to use headless mode
           BROWSER: chrome
           IMPLICIT_WAIT: 10
-        run: mvn clean test
+        run: mvn clean test --batch-mode
 
-      # ✅ Debug: List target folder
-      - name: Debug target folder
+      # ✅ Upload Surefire Reports
+      - name: Upload Surefire Reports
         if: always()
-        run: ls -R target || true
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
 
-      # ✅ Generate Allure report via Maven plugin
-      - name: Generate Allure Report
-        if: always()
-        run: mvn allure:report || true
-
-      # ✅ Upload Allure results
+      # ✅ Upload Allure Results (JSON)
       - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: target/allure-results/
-          if-no-files-found: warn
 
-      # ✅ Upload Allure HTML report
-      - name: Upload Allure HTML Report
+      # ✅ Generate Allure Report (HTML)
+      - name: Generate Allure Report
+        if: always()
+        run: |
+          mkdir -p target/allure-report
+          npx allure-commandline generate target/allure-results -o target/allure-report || true
+
+      # ✅ Upload Allure HTML Report
+      - name: Upload Allure Report (HTML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-html-report
-          path: target/site/allure-maven-plugin/
-          if-no-files-found: warn
+          name: allure-report
+          path: target/allure-report/
 
       # ✅ Upload Cucumber HTML report
       - name: Upload Cucumber HTML Report
@@ -79,8 +92,8 @@ jobs:
           path: target/cucumber-reports.html
           if-no-files-found: ignore
 
-      # ✅ Upload Screenshots on failure
-      - name: Upload Screenshots
+      # ✅ Upload screenshots on failure
+      - name: Upload Screenshots on Failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
