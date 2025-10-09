@@ -31,41 +31,37 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # ✅ Install Chrome browser (needed for Selenium)
+      # ✅ Install Chrome browser
       - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable || true
           google-chrome --version
 
-      # ✅ Verify dependencies
+      # ✅ Verify Maven setup
       - name: Verify dependencies
         run: mvn dependency:resolve
 
-      # ✅ Run Maven Tests and generate Allure results + HTML report
-      - name: Run Maven Tests (with Allure)
+      # ✅ Run Selenium + Cucumber Tests
+      - name: Run Tests (generate allure-results)
         env:
           CI: true
           BROWSER: chrome
           IMPLICIT_WAIT: 10
-        run: mvn clean verify -B
+        run: mvn clean test -B
 
-      # ✅ Debug: check if Allure results exist
-      - name: Debug Allure Results
+      # ✅ Debug allure-results directory before report generation
+      - name: Debug Allure Results Directory
         if: always()
         run: |
-          echo "Checking target/allure-results folder..."
-          if [ -d target/allure-results ] && [ "$(ls -A target/allure-results)" ]; then
-            echo "Allure results exist. Listing contents:"
-            ls -la target/allure-results
-          else
-            echo "WARNING: target/allure-results folder does not exist or is empty!"
-          fi
+          echo "--- Checking for allure-results ---"
+          find target -type d -name "allure-results" || echo "No allure-results directory found!"
+          echo "--- End ---"
 
-      # ✅ Debug: list full target folder for reference
-      - name: Debug full target folder
+      # ✅ Generate Allure HTML Report via Maven plugin
+      - name: Generate Allure HTML Report
         if: always()
-        run: ls -R target || true
+        run: mvn allure:report || true
 
       # ✅ Upload Surefire Reports
       - name: Upload Surefire Reports
@@ -75,13 +71,14 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
 
-      # ✅ Upload Allure Results (JSON)
+      # ✅ Upload Allure Results
       - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: target/allure-results/
+          if-no-files-found: warn
 
       # ✅ Upload Allure HTML Report
       - name: Upload Allure HTML Report
@@ -90,8 +87,9 @@ jobs:
         with:
           name: allure-report
           path: target/allure-report/
+          if-no-files-found: warn
 
-      # ✅ Upload Cucumber HTML report
+      # ✅ Upload Cucumber HTML Report
       - name: Upload Cucumber HTML Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -100,7 +98,7 @@ jobs:
           path: target/cucumber-reports.html
           if-no-files-found: ignore
 
-      # ✅ Upload screenshots on failure
+      # ✅ Upload Screenshots (optional)
       - name: Upload Screenshots on Failure
         if: failure()
         uses: actions/upload-artifact@v4
