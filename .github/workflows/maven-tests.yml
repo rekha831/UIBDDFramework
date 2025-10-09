@@ -50,8 +50,20 @@ jobs:
           IMPLICIT_WAIT: 10
         run: mvn clean verify -B
 
-      # ✅ Debug: list target folder to check reports
-      - name: Debug target folder
+      # ✅ Debug: check if Allure results exist
+      - name: Debug Allure Results
+        if: always()
+        run: |
+          echo "Checking target/allure-results folder..."
+          if [ -d target/allure-results ] && [ "$(ls -A target/allure-results)" ]; then
+            echo "Allure results exist. Listing contents:"
+            ls -la target/allure-results
+          else
+            echo "WARNING: target/allure-results folder does not exist or is empty!"
+          fi
+
+      # ✅ Debug: list full target folder for reference
+      - name: Debug full target folder
         if: always()
         run: ls -R target || true
 
