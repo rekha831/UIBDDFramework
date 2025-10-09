@@ -39,18 +39,21 @@ jobs:
           google-chrome --version
 
       # ✅ Verify dependencies
-      - name: Verify ChromeDriver and Chrome setup
-        run: |
-          mvn dependency:resolve
-          echo "Chrome and driver setup verified"
+      - name: Verify dependencies
+        run: mvn dependency:resolve
 
-      # ✅ Run Selenium + TestNG + Rest-Assured Tests
-      - name: Run Maven Tests
+      # ✅ Run Maven Tests and generate Allure results + HTML report
+      - name: Run Maven Tests (with Allure)
         env:
-          CI: true               # tells DriverFactory to use headless mode
+          CI: true
           BROWSER: chrome
           IMPLICIT_WAIT: 10
-        run: mvn clean test --batch-mode
+        run: mvn clean verify -B
+
+      # ✅ Debug: list target folder to check reports
+      - name: Debug target folder
+        if: always()
+        run: ls -R target || true
 
       # ✅ Upload Surefire Reports
       - name: Upload Surefire Reports
@@ -68,15 +71,8 @@ jobs:
           name: allure-results
           path: target/allure-results/
 
-      # ✅ Generate Allure Report (HTML)
-      - name: Generate Allure Report
-        if: always()
-        run: |
-          mkdir -p target/allure-report
-          npx allure-commandline generate target/allure-results -o target/allure-report || true
-
       # ✅ Upload Allure HTML Report
-      - name: Upload Allure Report (HTML)
+      - name: Upload Allure HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
