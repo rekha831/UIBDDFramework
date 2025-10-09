@@ -44,37 +44,28 @@ jobs:
           IMPLICIT_WAIT: 10
         run: mvn clean test --batch-mode
 
-      # ✅ Debug listing to verify if allure-results exist
-      - name: Debug - List Target Folder
-        if: always()
-        run: |
-          echo "Listing target folder for debug:"
-          ls -R target || true
+      # 3️⃣ Run Tests (this generates allure-results)
+      - name: Run Maven Tests
+        run: mvn clean test
 
-      # ✅ Generate Allure Report
+      # 4️⃣ Install Allure Commandline
+      - name: Install Allure
+        run: |
+          sudo apt-add-repository ppa:qameta/allure -y
+          sudo apt-get update
+          sudo apt-get install allure -y
+
+      # 5️⃣ Generate Allure Report
       - name: Generate Allure Report
-        if: always()
         run: |
-          mvn allure:report || true
-          echo "Allure report generation attempted"
+          allure generate target/allure-results --clean -o target/allure-report
 
-      # ✅ Upload Allure Results (raw data)
-      - name: Upload Allure Results
-        if: always()
+      # 6️⃣ Upload Allure Report as Artifact
+      - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results
-          path: target/allure-results/
-          if-no-files-found: warn
-
-      # ✅ Upload Allure HTML Report
-      - name: Upload Allure HTML Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-html-report
-          path: target/site/allure-maven-plugin/
-          if-no-files-found: warn
+          name: allure-report
+          path: target/allure-report
 
       # ✅ Upload Cucumber HTML Report
       - name: Upload Cucumber HTML Report
@@ -85,7 +76,7 @@ jobs:
           path: target/cucumber-reports.html
           if-no-files-found: ignore
 
-      # ✅ Upload Screenshots (optional)
+      # ✅ Upload Screenshots on Failure
       - name: Upload Screenshots on Failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -93,23 +84,3 @@ jobs:
           name: failed-screenshots
           path: target/screenshots/
           if-no-files-found: ignore
-
-  # ✅ Optional: Publish Allure Report to GitHub Pages
-  publish-report:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Download Allure HTML artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-html-report
-          path: ./allure-report
-
-      - name: Deploy Allure Report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          publish_branch: gh-pages
-          force_orphan: true
