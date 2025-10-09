@@ -43,6 +43,30 @@ jobs:
           BROWSER: chrome
           IMPLICIT_WAIT: 10
         run: mvn clean test --batch-mode
+        
+        # ✅ Generate Allure Report
+      - name: Generate Allure Report
+        if: always()
+        run: |
+          mvn allure:report
+          echo "Allure report generated"
+
+      # ✅ Upload Allure Results (raw data)
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: target/allure-results/
+
+      # ✅ Upload Allure HTML Report
+      - name: Upload Allure HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-report
+          path: target/site/allure-maven-plugin/
+        
 
       # ✅ Upload Cucumber HTML report (if it exists)
       - name: Upload Cucumber HTML Report
