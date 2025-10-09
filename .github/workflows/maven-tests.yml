@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Checkout the repository
+      # ✅ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -23,36 +23,36 @@ jobs:
           java-version: 17
           cache: maven
 
-      # ✅ Install Chrome browser (needed for Selenium)
+      # ✅ Install Chrome
       - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable || true
           google-chrome --version
 
-      # ✅ Verify ChromeDriver and dependencies
-      - name: Verify ChromeDriver setup
+      # ✅ Verify dependencies
+      - name: Verify dependencies
         run: mvn dependency:resolve
 
-      # ✅ Run Selenium Tests in headless mode
-      - name: Run Selenium Tests
+      # ✅ Run Selenium Tests (this will generate allure-results via Cucumber plugin)
+      - name: Run Maven Tests
         env:
           CI: true
           BROWSER: chrome
           IMPLICIT_WAIT: 10
-        run: mvn clean test --batch-mode
+        run: mvn clean test
 
-      # ✅ Debug: List target folder to verify Allure results
-      - name: Debug - List Target Folder
+      # ✅ Debug: List target folder
+      - name: Debug target folder
         if: always()
         run: ls -R target || true
 
-      # ✅ Generate Allure Report via Maven Plugin
+      # ✅ Generate Allure report via Maven plugin
       - name: Generate Allure Report
         if: always()
         run: mvn allure:report || true
 
-      # ✅ Upload Allure Results (raw JSON)
+      # ✅ Upload Allure results
       - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
@@ -61,7 +61,7 @@ jobs:
           path: target/allure-results/
           if-no-files-found: warn
 
-      # ✅ Upload Allure HTML Report
+      # ✅ Upload Allure HTML report
       - name: Upload Allure HTML Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -70,7 +70,7 @@ jobs:
           path: target/site/allure-maven-plugin/
           if-no-files-found: warn
 
-      # ✅ Upload Cucumber HTML Report
+      # ✅ Upload Cucumber HTML report
       - name: Upload Cucumber HTML Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -79,7 +79,7 @@ jobs:
           path: target/cucumber-reports.html
           if-no-files-found: ignore
 
-      # ✅ Upload Screenshots on Failure
+      # ✅ Upload Screenshots on failure
       - name: Upload Screenshots
         if: failure()
         uses: actions/upload-artifact@v4
