@@ -30,11 +30,9 @@ jobs:
           sudo apt-get install -y google-chrome-stable || true
           google-chrome --version
 
-      # ✅ Verify ChromeDriver and Chrome setup
-      - name: Verify ChromeDriver and Chrome setup
-        run: |
-          mvn dependency:resolve
-          echo "Chrome and driver setup verified"
+      # ✅ Verify ChromeDriver and dependencies
+      - name: Verify ChromeDriver setup
+        run: mvn dependency:resolve
 
       # ✅ Run Selenium Tests in headless mode
       - name: Run Selenium Tests
@@ -44,28 +42,33 @@ jobs:
           IMPLICIT_WAIT: 10
         run: mvn clean test --batch-mode
 
-      # 3️⃣ Run Tests (this generates allure-results)
-      - name: Run Maven Tests
-        run: mvn clean test
+      # ✅ Debug: List target folder to verify Allure results
+      - name: Debug - List Target Folder
+        if: always()
+        run: ls -R target || true
 
-      # 4️⃣ Install Allure Commandline
-      - name: Install Allure
-        run: |
-          sudo apt-add-repository ppa:qameta/allure -y
-          sudo apt-get update
-          sudo apt-get install allure -y
-
-      # 5️⃣ Generate Allure Report
+      # ✅ Generate Allure Report via Maven Plugin
       - name: Generate Allure Report
-        run: |
-          allure generate target/allure-results --clean -o target/allure-report
+        if: always()
+        run: mvn allure:report || true
 
-      # 6️⃣ Upload Allure Report as Artifact
-      - name: Upload Allure Report
+      # ✅ Upload Allure Results (raw JSON)
+      - name: Upload Allure Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: target/allure-report
+          name: allure-results
+          path: target/allure-results/
+          if-no-files-found: warn
+
+      # ✅ Upload Allure HTML Report
+      - name: Upload Allure HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-report
+          path: target/site/allure-maven-plugin/
+          if-no-files-found: warn
 
       # ✅ Upload Cucumber HTML Report
       - name: Upload Cucumber HTML Report
@@ -77,7 +80,7 @@ jobs:
           if-no-files-found: ignore
 
       # ✅ Upload Screenshots on Failure
-      - name: Upload Screenshots on Failure
+      - name: Upload Screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
