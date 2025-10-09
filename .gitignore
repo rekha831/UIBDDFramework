@@ -69,3 +69,5 @@ target/**/*.properties
 
 # Eclipse workspace metadata
 .metadata/
+
+.allure/
