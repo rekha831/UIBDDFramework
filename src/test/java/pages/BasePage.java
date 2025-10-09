@@ -12,7 +12,7 @@ import utils.SeleniumUtils;
 public abstract class BasePage {
 
     protected WebDriver driver;
-    private static final int DEFAULT_TIMEOUT = ConfigManager.getInt("explicitWait");
+    private static final int DEFAULT_TIMEOUT = ConfigManager.getInstance().getInt("explicitWait");
 
     public BasePage(WebDriver driver) {
         this.driver = driver;

@@ -15,8 +15,8 @@ public class Hooks {
 
 	@Before
 	public void beforeScenario() {
-	    String browser = System.getProperty("browser", ConfigManager.get("browser"));
-	    String implicitWaitDuration = System.getProperty("implicitWait", ConfigManager.get("implicitWait"));
+	    String browser = ConfigManager.getInstance().get("browser");
+	    String implicitWaitDuration = ConfigManager.getInstance().get("implicitWait");
 	    System.out.println("wait is"+implicitWaitDuration);
 	    DriverFactory.initDriver(browser, implicitWaitDuration);
 	}
